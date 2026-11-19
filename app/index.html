@@ -3,21 +3,96 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Cover Snap</title>
-<link rel="stylesheet" href="./style.css">
+<title>Vice Cover Lab — turn your photo into GTA VI-style cover art</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%23ffd319'/%3E%3Cstop offset='.55' stop-color='%23ff2975'/%3E%3Cstop offset='1' stop-color='%238c1eff'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='64' height='64' rx='12' fill='url(%23g)'/%3E%3Ctext x='32' y='44' font-family='Arial Black, sans-serif' font-size='34' font-weight='900' text-anchor='middle' fill='white'%3EV%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
-<main class="app">
-  <section class="controls">
-    <h1>Cover Snap</h1>
-    <p>A photo and a caption, made into a square cover.</p>
-    <label>Photo <input id="photo" type="file" accept="image/*"></label>
-    <label>Caption <input id="caption" type="text" maxlength="40" value="Sunset Heist"></label>
-    <button id="export" type="button">Export PNG 1080 x 1080</button>
-    <p id="status" role="status"></p>
+<header class="masthead">
+  <div class="masthead-title">
+    <h1>VICE COVER LAB</h1>
+    <p>Turn your photo into a sun-soaked multi-panel poster — offline, in your browser, nothing uploaded anywhere.</p>
+  </div>
+  <div class="masthead-actions">
+    <button type="button" id="undoBtn" class="ghost-btn" disabled>↩ Undo</button>
+    <button type="button" id="redoBtn" class="ghost-btn" disabled>↪ Redo</button>
+  </div>
+</header>
+
+<main class="workbench">
+  <section class="stage-col">
+    <div class="stage-wrap" id="stageWrap">
+      <canvas id="stage" width="900" height="900"></canvas>
+    </div>
+    <p class="status-line" id="statusLine">Loading samples…</p>
+    <p class="hint">Click a panel to select it. Drag the photo inside it to move it, scroll over it to zoom. Click a photo below to put it in the selected panel.</p>
   </section>
-  <canvas id="cover" width="1080" height="1080" aria-label="The cover"></canvas>
+
+  <aside class="controls" id="controls">
+    <section class="panel">
+      <h2>1 · Photos</h2>
+      <label class="upload-btn" for="photoInput">＋ Upload photos</label>
+      <input type="file" id="photoInput" accept="image/*" multiple hidden>
+      <div class="sample-row">
+        <button type="button" id="samplePier" class="ghost-btn">Sample: Pier</button>
+        <button type="button" id="sampleBoulevard" class="ghost-btn">Sample: Boulevard</button>
+      </div>
+      <div class="tray" id="tray"></div>
+    </section>
+
+    <section class="panel">
+      <h2>2 · Layout</h2>
+      <div class="pill-row" id="layoutRow"></div>
+      <h2>Preview shape</h2>
+      <div class="pill-row" id="aspectRow"></div>
+    </section>
+
+    <section class="panel">
+      <h2>3 · Grade</h2>
+      <div class="swatch-row" id="gradeRow"></div>
+      <label class="check"><input type="checkbox" id="grainToggle" checked> Film grain</label>
+      <label class="check"><input type="checkbox" id="vignetteToggle" checked> Vignette</label>
+    </section>
+
+    <section class="panel">
+      <h2>4 · Lettering</h2>
+      <label class="field">Title
+        <input type="text" id="titleInput" value="Sunset Heist" maxlength="40" autocomplete="off">
+      </label>
+      <label class="field">Subtitle
+        <input type="text" id="subtitleInput" value="a Vice City story" maxlength="60" autocomplete="off">
+      </label>
+      <label class="field">Badge ribbon
+        <input type="text" id="badgeInput" value="VICE CITY • EST. 2026" maxlength="40" autocomplete="off">
+      </label>
+      <div class="stars-label">Heat meter</div>
+      <div class="star-row" id="starRow"></div>
+    </section>
+
+    <section class="panel">
+      <h2>5 · Selected panel</h2>
+      <label class="field">Zoom <span id="zoomValue">100%</span>
+        <input type="range" id="zoomRange" min="1" max="3" step="0.05" value="1">
+      </label>
+      <div class="btn-row">
+        <button type="button" id="resetPanel" class="ghost-btn">Reset pan &amp; zoom</button>
+        <button type="button" id="clearPanel" class="ghost-btn">Clear photo</button>
+      </div>
+    </section>
+
+    <section class="panel export-panel">
+      <h2>6 · Export PNG</h2>
+      <div class="btn-col">
+        <button type="button" id="exportSquare" class="export-btn">Square · 1080 × 1080</button>
+        <button type="button" id="exportStory" class="export-btn">Story · 1080 × 1350</button>
+        <button type="button" id="exportWide" class="export-btn">Wide · 1920 × 1080</button>
+        <button type="button" id="exportAll" class="export-btn primary">Export all three sizes</button>
+      </div>
+      <p class="fineprint">Rendered locally on your machine. No Rockstar Games logo, artwork or fonts are used — all lettering and art are drawn in code.</p>
+    </section>
+  </aside>
 </main>
-<script type="module" src="./src/main.js"></script>
+
+<script type="module" src="src/main.js"></script>
 </body>
 </html>

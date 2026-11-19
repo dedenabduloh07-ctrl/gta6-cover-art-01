@@ -1,40 +1,49 @@
-// A working gta6-cover-art-01 entry (Node 22, standard library only): the app is this directory's app/ folder, plain
-// static files a desktop browser loads offline (app/index.html and its ES modules, no library and no network
-// request), and the program hands it in. It copies app/ and screenshots/ from beside this file to /output and writes
-// /output/dossier.json, the summary the judge reads, with the vendored make.fun library. Only the plumbing, not the
-// cover art the bounty asks for: Cover Snap, a plain one-photo square cover with a sunset tint and a bold caption,
-// exported as a 1080 x 1080 PNG. Its two sample photos (app/samples/) were made for make.fun with an image model and
-// are free to use. Build your own GTA-style cover maker in its place, put your 3 or 4 PNG or JPEG screenshots in
-// screenshots/ (the first by name is the cover) and run it.
+// Vice Cover Lab — hand-in program for gta6-cover-art-01 (Node 22+, stdlib only).
 //
-// Serve it locally with `node serve.ts`, then open http://localhost:8080.
-// Outside the grader's container, MAKEFUN_OUTPUT_DIR stands in for /output:
+// What it does: takes this repo's app/ (the offline cover maker, plain static
+// files) and screenshots/ (3-4 captures of the app and its exported covers) and
+// hands them to the grader in /output, together with /output/dossier.json — the
+// summary the judge reads, built by the vendored make.fun library.
+//
+// Run locally to try it:
 //   mkdir -p out && MAKEFUN_OUTPUT_DIR=out node main.ts
+// Serve the app while developing with `node serve.ts` (http://localhost:8080).
 
 import { cpSync, existsSync, mkdirSync, writeFileSync } from 'node:fs';
-import { join } from 'node:path';
+import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { buildDossier } from './vendor/makefun-app.ts';
 
-const here = fileURLToPath(new URL('.', import.meta.url));
-const out = process.env.MAKEFUN_OUTPUT_DIR ?? '/output';
+// Where this file lives is the repo root; the grader runs it from there.
+const repoRoot = dirname(fileURLToPath(import.meta.url));
 
-mkdirSync(out, { recursive: true });
-cpSync(join(here, 'app'), join(out, 'app'), { recursive: true });
-mkdirSync(join(out, 'screenshots'), { recursive: true });
-if (existsSync(join(here, 'screenshots'))) cpSync(join(here, 'screenshots'), join(out, 'screenshots'), { recursive: true });
+// The grader hands us /output; outside its container MAKEFUN_OUTPUT_DIR
+// stands in for it, so a local run never touches the real root.
+const outputDir = process.env.MAKEFUN_OUTPUT_DIR ?? '/output';
 
-// The scorer's own caps (reference/gate.json): only text_max_bytes shapes the bytes; the others refuse an entry the
-// scorer would refuse (more than 4 screenshots or one over 256 KiB; more than 993 files in app/ or 48 MiB of app
-// files, in all, or a path under app/ over 1000 bytes: app/ counts beside /output's own 1000-entry cap, its
-// screenshots/ and dossier.json).
+function mirrorTree(sourceDir: string, targetDir: string): void {
+  mkdirSync(targetDir, { recursive: true });
+  if (existsSync(sourceDir)) {
+    cpSync(sourceDir, targetDir, { recursive: true });
+  }
+}
+
+mirrorTree(join(repoRoot, 'app'), join(outputDir, 'app'));
+mirrorTree(join(repoRoot, 'screenshots'), join(outputDir, 'screenshots'));
+
+// The scorer's caps for this bounty (its reference/gate.json): the text cap
+// shapes the dossier bytes; the rest refuse an entry the scorer would refuse
+// — more than 4 screenshots, one over 256 KiB, an app/ over 993 files or
+// 48 MiB in all, or a path under app/ over 1000 bytes.
+const dossierCaps = {
+  text_max_bytes: 163840,
+  screenshots: { max: 4, max_bytes: 262144 },
+  app_max_files: 993,
+  app_max_bytes: 50331648,
+  app_path_max_bytes: 1000,
+};
+
 writeFileSync(
-  join(out, 'dossier.json'),
-  buildDossier(out, {
-    text_max_bytes: 163840,
-    screenshots: { max: 4, max_bytes: 262144 },
-    app_max_files: 993,
-    app_max_bytes: 50331648,
-    app_path_max_bytes: 1000,
-  }),
+  join(outputDir, 'dossier.json'),
+  buildDossier(outputDir, dossierCaps),
 );
