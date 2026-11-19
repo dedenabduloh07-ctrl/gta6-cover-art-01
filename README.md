@@ -1,8 +1,8 @@
 # Vice Cover Lab
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![Made for make.fun](https://img.shields.io/badge/make.fun-bounty%20gta6--cover--art--01-ff2d78)](https://make.fun/bounty/gta6-cover-art-01)
-[![Offline](https://img.shields.io/badge/offline-zero%20network%20requests-00e5c0)](app/index.html)
+[![make.fun · gta6-cover-art-01](https://make.fun/badge/gta6-cover-art-01.svg)](https://make.fun/bounty/gta6-cover-art-01?utm_source=github&utm_medium=readme&utm_campaign=gta6-cover-art-01)
+[![rank](https://make.fun/badge/gta6-cover-art-01/dedenabduloh07-ctrl/gta6-cover-art-01/rank.svg)](https://make.fun/bounty/gta6-cover-art-01/leaderboard?utm_source=github&utm_medium=readme&utm_campaign=gta6-cover-art-01)
+[![reward](https://make.fun/badge/gta6-cover-art-01/dedenabduloh07-ctrl/gta6-cover-art-01/reward.svg)](https://make.fun/bounty/gta6-cover-art-01?utm_source=github&utm_medium=readme&utm_campaign=gta6-cover-art-01)
 
 Turn your photo into a sun-soaked, multi-panel GTA VI-style poster — offline, in
 your browser, nothing uploaded anywhere. Built for the
